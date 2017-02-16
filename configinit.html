@@ -95,7 +95,7 @@ I should note one other feature of the FreeBSD EC2 images, which I’ll illustra
 </p>
 
 <p class="maintext_indent">
-I would also like to note a couple other cool things.  The line "growfs_enable" will automatically increase the root partition to use the full size of the disk we defined when creating the EC2 instance which is handy when using EBS root vols. Finally there is firstboot_pkgs_list line, as you'll remember in our configinit snippet we execute a sed command against this line.  I find it really handy to have a simple method of defining which packages I want installed on boot, especially when it is as clear as this.
+I would also like to note a couple other cool things.  The line "growfs_enable" will automatically increase the root partition to use the full size of the disk we defined when creating the EC2 instance which is handy when using EBS root vols. Finally there is the firstboot_pkgs_list line, as you'll remember from above, is where we execute a sed command against to list a baseline set of packages.  I find it really handy to have a simple method of defining which packages I want installed on boot, especially when it is as clear as this.
 </p>
 
 <p class="maintext_indent">
