@@ -42,11 +42,11 @@
                         <p class="caption">The Cloud!
                     </p>
 <p class="maintext">
-Let's have fun with configinit to automate provisioning FreeBSD instances on AWS EC2.  Check out configinit here: http://www.daemonology.net/blog/2013-12-09-FreeBSD-EC2-configinit.html
+Let's have fun with configinit to automate provisioning FreeBSD instances on AWS EC2.  You can check out configinit <a href="http://www.daemonology.net/blog/2013-12-09-FreeBSD-EC2-configinit.html"> here </a> which I highly recommed doing before reading the rest of this post.
 </p>
 
 <p class="maintext_indent">
-This demo will cover leveraging configinit on FreeBSD to easily install arbitrary packages and configure SaltStack (a popular configuration management engine) upon first boot.  Hopefully I'll illustrate that a simple, clearly defined tool like configinit is capable of pretty powerful system automation while also being flexible.  This is also known as “the Unix way” for those following along at home.
+This demo will cover leveraging configinit on FreeBSD to easily install arbitrary packages while configuring a SaltStack client (a popular configuration management engine) upon first boot.  Hopefully I'll illustrate that a simple, clearly defined tool like configinit is capable of pretty powerful system automation while also being flexible.  This is also known as “the Unix way” for those following along at home.
 </p>
 
 <p class="maintext_indent">
@@ -74,7 +74,7 @@ The above example is a simple /bin/sh script which is executed by your new EC2 i
 </p>
 
 <p class="maintext_indent">
-Colin's EC2 images are configured to have cloudinit enabled by default.  Here is what the base /etc/rc.conf from his image looks like which will hopefully put the sed command above in better context:
+Colin Percival configured the FreeBSD EC2 images in the AWS Marketplace to have cloudinit enabled by default which is helpful.  Let's take a look at the base /etc/rc.conf from his image, the first line enables configinit followed by installing the public key we defined when instantiating this instance.  We also configure swapspace, and the key for logging:
 </p>
 
 <pre>
@@ -91,7 +91,11 @@ firstboot_pkgs_list="awscli"
 
 </pre>
 <p class="maintext_indent">
-I should note one other feature of the FreeBSD EC2 images, which I’ll illustrate belo.  When you first boot a FreeBSD EC2 instance it will perform a freebsd-update (another utility written by Colin) to ensure your new system is fully patched against the RELEASE branch you are deploying.  This saves some work as an admin, as I don’t have to configure my CloudInit script to perform an upgrade myself.  Having sane default behaviour is an added bonus in such a hostile environment like AWS.
+I should note one other feature of the FreeBSD EC2 images, which I’ll illustrate bellow.  When you first boot a FreeBSD EC2 instance it will perform a freebsd-update (another utility written by Colin) to ensure your new system is fully patched against the RELEASE branch you are deploying, as well as ensuring pkg is bootstrapped.  Both of those tasks are accomplished via the first two firstboot_* directives.  This saves some work as an admin, as I don’t have to configure my CloudInit script to perform an upgrade myself.  Having sane default behaviour is an added bonus in such a hostile environment like AWS.
+</p>
+
+<p class="maintext_indent">
+I would also like to note a couple other cool things.  The line "growfs_enable" will automatically increase the root partition to use the full size of the disk we defined when creating the EC2 instance which is handy when using EBS root vols. Finally there is firstboot_pkgs_list line, as you'll remember in our configinit snippet we execute a sed command against this line.  I find it really handy to have a simple method of defining which packages I want installed on boot, especially when it is as clear as this.
 </p>
 
 <p class="maintext_indent">
@@ -156,47 +160,10 @@ freebsd-update: Requesting reboot after installing updates.
 </pre>
 
 <p class="maintext_indent">
-So pretty normal boot process and you'll notice right after network is finished being configured cloudinit kicks-in installing our defined packages.  Also, as I mentioned earlier you'll notice that we also execute freebsd-update which ensures we are all patched up.  Hopefully this demo gives you all some good ideas on how to exploit automation techniques like this for your infrastructure.
+So pretty normal boot process and you'll notice right after network is finished being configured cloudinit kicks-in installing our defined packages.  Also, as I mentioned earlier you'll notice that we also execute freebsd-update which ensures we are all patched up.  I've successfuly used FreeBSD + configinit + salt-stack to deploy multi-tier web stacks on AWS in a more or less fully automated manner.   Hopefully this demo gives you all some good ideas on how to exploit automation techniques like this for your infrastructure.
 </p>
 
 
-            <!-- <div> <img class="jump" src="images/arrow_jump.svg" height="175" width="175"></div> -->
-
-            
-
-            <!-- <div id="sidebar">
-                <p class="sidehed">
-                RECENT POSTS
-                </p>
-                <p class="sidetext"> <a href="#">
-                Installing OpenSMTPD On FreeBSD</a>
-                </p>
-                <p class="sidetext"> <a href="#">
-                Configinit on AWS</a>
-                </p>
-                <p class="sidetext"> <a href="#">
-                Post title here tk tk post</a>
-                </p>
-                <p class="sidetext"> <a href="#">
-                Post title here tk tk post</a>
-                </p>
-                <p class="sidetext"> <a href="#">
-                Post title here tk tk post</a>
-                </p>
-
-                <div id="social">
-                    <a class="icon-mail"><href="mailto:nomadlogic@gmail.com"></a>
-                    <a class="icon-twitter2"><href="http://www.twitter.com" target="_blank"></a>
-                    <a class="icon-linkedin"><href="http://www.linkedin.com" target="_blank"></a>
-                </div>
-
-
-            </div> -->
-            
-
-        <!--    <div id="button1"><a href="#">Next</a></div>
-            <div id="button2"><a href="#">Previous</a></div>
- -->
 
                     <div class="rule"></div>
 
