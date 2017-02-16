@@ -41,77 +41,6 @@ png" />
     </head>
 
 <body>
-
-    <div id="container">
-
-        <header>
-            <div id="masthead">
-
-                <a href="index.php">
-                    <p class="title">Ratio Architectis</p>
-                    <!-- <img src="_images/masthead-new6.png" height="73" width="280"> -->
-                </a>
-            </div>
-            <div id="shadow"></div>
-        </header>
-
-            <nav>
-                <!-- <a href="index.html" class="chosen">HOME</a> -->
-                <a href="about.php">ABOUT</a>
-                <a href="links.php">LINKS</a>
-                <!-- <a href="contact.html">CONTACT</a> -->
-            </nav>
-
-         <div id="main">
-
-
-            <div id="sidebar">
-                <p class="sidehed">
-                RECENT POSTS
-                </p>
-                <p class="sidetext"> <a href="post1">
-                Configinit on AWS</a>
-                </p>
-                <p class="sidetext"> <a href="#post2">
-                Installing OpenSMTPD On FreeBSD</a>
-                </p>
-
-
-                <div id="social">
-                    <a class="icon-mail"><href="mailto:nomadlogic@gmail.com"></a>
-                    <a class="icon-twitter2"><href="https://www.twitter.com/nomadlogicLA" target="_blank
-"></a>
-                    <a class="icon-linkedin"><href="https://www.linkedin.com/in/nomadlogic" target="_bla
-nk"></a>
-                </div>
-
-
-            </div>
-
-
-            <div id="sidebarMobile">
-                <p class="sidehed">
-                RECENT POSTS
-                </p>
-                <p class="sidetext"> <a id="post1">
-                Configinit on AWS</a>
-                </p>
-                <p class="sidetext"> <a id="#post2">
-                Installing OpenSMTPD On FreeBSD</a>
-                </p>
-
-
-                <div id="socialMobile">
-                    <a class="icon-mail"><href="mailto:nomadlogic@gmail.com"></a>
-                    <a class="icon-twitter2"><href="https://www.twitter.com/nomadlogicLA" target="_blank
-"></a>
-                    <a class="icon-linkedin"><href="https://www.linkedin.com/in/nomadlogic" target="_bla
-nk"></a>
-                </div>
-
-
-            </div>
-
 <article>
                 <h1 id="#post1">Installing OpenSMTPD On FreeBSD</h1>
                         <p class="datetext"> Jun 9, 2016 </p>
@@ -164,7 +93,7 @@ Proceed with this action? [y/N]: y
                       </pre>
 
                         <p class="maintext_indent">
-                                                Wow, the openstmpd-extras package pulls in a lot of extra dependencies.  I struggled for a while contemplating rebuilding this package to not include the MySQL and PostgreSQL client packages as I don't have a use-case for RDBMS backends.  I eventually decided that the overhead of managing a custom repository was not worth the bloat of having client libraries for these systems on my mail server.  I am also hoping the FreeBSD packaging team will do a better job than me at tracking security vulns on this software than Iw ould be able to do.
+                                                Wow, the openstmpd-extras package pulls in a lot of extra dependencies.  I struggled for a while contemplating rebuilding this package to not include the MySQL and PostgreSQL client packages as I don't have a use-case for RDBMS backends.  I eventually decided that the overhead of managing a custom repository was not worth the bloat of having client libraries for these systems on my mail server.  I am also hoping the FreeBSD packaging team will do a better job than me at tracking security vulns on this software than I would be able to do.
                         </p>
                                                 
                                                 <p class="maintext_indent">
