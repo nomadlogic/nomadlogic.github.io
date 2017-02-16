@@ -74,7 +74,7 @@ The above example is a simple /bin/sh script which is executed by your new EC2 i
 </p>
 
 <p class="maintext_indent">
-Colin Percival configured the FreeBSD EC2 images in the AWS Marketplace to have cloudinit enabled by default which is helpful.  Let's take a look at the base /etc/rc.conf from his image, the first line enables configinit followed by installing the public key we defined when instantiating this instance.  We also configure swapspace, and the key for logging:
+Colin Percival configured the FreeBSD EC2 images in the AWS Marketplace to have configinit enabled by default which is helpful.  Let's take a look at the base /etc/rc.conf from his image, the first line enables configinit followed by installing the public key we defined when instantiating this instance.  We also configure swapspace, and the key for logging:
 </p>
 
 <pre>
