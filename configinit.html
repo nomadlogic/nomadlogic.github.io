@@ -54,7 +54,7 @@ For starters here is our example configinit script which will be defined as user
 </p>
 
 <pre>
-!/bin/sh
+#!/bin/sh
 # This sed line updates the list of packages to install on first boot
 sed -i .dist 's/awscli/awscli\ py27-salt\ bash\ tmux\ sudo\ vim-lite/g'  /etc/rc.conf
 # Define hostname
