@@ -58,12 +58,12 @@ For starters here is our example configinit script which will be defined as user
 # This sed line updates the list of packages to install on first boot
 sed -i .dist 's/awscli/awscli\ py27-salt\ bash\ tmux\ sudo\ vim-lite/g'  /etc/rc.conf
 # Define hostname
-echo "hostname="nsub0.iad.tribdev.com"" >> /etc/rc.conf
+echo "hostname="webapp0.iad.nomadlogic.org"" >> /etc/rc.conf
 
 # SaltStack agent configuration
 mkdir -p /usr/local/etc/salt/
 
-echo "master: 10.1.2.3" >> /usr/local/etc/salt/minion
+echo "master: 10.11.12.13" >> /usr/local/etc/salt/minion
 echo "hash_type: sha512" >> /usr/local/etc/salt/minion
 
 echo "salt_minion_enable="YES"" >> /etc/rc.conf
