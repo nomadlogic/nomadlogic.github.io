@@ -70,7 +70,7 @@ echo "salt_minion_enable="YES"" >> /etc/rc.conf
 
 </pre>
 <p class="maintext_indent">
-The above example is a simple /bin/sh script which is executed by your new EC2 instance on first boot.  It illustrates that you can not only install packages on first boot, but also automate standing up your configuration management engine (SaltStack minion in this example) leveraging configinit.  Because this is "user data" that is passed by EC2 it is very simple to automate deployment of new instances using configinit.  I've been able to template out my user data shell script (similar the one above), and have my inventory define settings like "hostname" as well as my package list.  SaltStack takes care of the rest once we have this base config deployed, and I've managed to lower the amount of data I have to keep track of.
+The above example is a simple /bin/sh script which is executed by your new EC2 instance on first boot.  It illustrates that you can not only install packages on first boot, but also automate standing up your configuration management engine (SaltStack minion in this example) as well.  Because this is "user data" that is passed by EC2 it is very simple to automate deployment of new instances using configinit.  For example I've been able to template out my user data shell script (similar the one above), and have my inventory define settings like "hostname" as well as my package list.  Then my EC2 provisioning script will pass the customized configinit script to AWS ensuring my client is defined correctly.  SaltStack takes care of the rest once we have this base config deployed, and I've managed to lower the amount of data I have to keep track of in the process.
 </p>
 
 <p class="maintext_indent">
