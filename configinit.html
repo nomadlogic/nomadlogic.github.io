@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Ratio Architectis \xe2\x80\xa2 OpenSMTPD</title>
+        <link rel="stylesheet" href="_css/styles.css" type="text/css">
+        <script src="https://use.typekit.net/pha1ivh.js"></script>
+        <script>try{Typekit.load({ async: true });}catch(e){}</script>
+
+        <link rel="apple-touch-icon-precomposed" sizes="57x57" href="_images/apple-touch-icon-57x57.png" />
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="_images/apple-touch-icon-114x114.png" />
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="_images/apple-touch-icon-72x72.png" />
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="_images/apple-touch-icon-144x144.png" />
+        <link rel="apple-touch-icon-precomposed" sizes="60x60" href="_images/apple-touch-icon-60x60.png" />
+        <link rel="apple-touch-icon-precomposed" sizes="120x120" href="_images/apple-touch-icon-120x120.png" />
+        <link rel="apple-touch-icon-precomposed" sizes="76x76" href="_images/apple-touch-icon-76x76.png" />
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="_images/apple-touch-icon-152x152.png" />
+        <link rel="icon" type="image/png" href="_images/favicon-196x196.png" sizes="196x196" />
+        <link rel="icon" type="image/png" href="_images/favicon-96x96.png" sizes="96x96" />
+        <link rel="icon" type="image/png" href="_images/favicon-32x32.png" sizes="32x32" />
+        <link rel="icon" type="image/png" href="_images/favicon-16x16.png" sizes="16x16" />
+        <link rel="icon" type="image/png" href="_images/favicon-128.png" sizes="128x128" />
+        <meta name="application-name" content="&nbsp;"/>
+        <meta name="msapplication-TileColor" content="#FFFFFF" />
+        <meta name="msapplication-TileImage" content="_images/mstile-144x144.png" />
+        <meta name="msapplication-square70x70logo" content="_images/mstile-70x70.png" />
+        <meta name="msapplication-square150x150logo" content="_images/mstile-150x150.png" />
+        <meta name="msapplication-wide310x150logo" content="_images/mstile-310x150.png" />
+        <meta name="msapplication-square310x310logo" content="_images/mstile-310x310.png" />
+
+    </head>
+
+<body>
+<article>
+<h1 id="#post1">Configinit on AWS</h1>
+
+<p class="datetext"> October 15, 2016 
+                    </p>
+                        <img src="_images/IMG_20150912_063147.jpg">
+                        <p class="caption">The Cloud!
+                    </p>
+<p class="maintext">
+Let's have fun with configinit to automate provisioning FreeBSD instances on AWS EC2.  Check out configinit here: http://www.daemonology.net/blog/2013-12-09-FreeBSD-EC2-configinit.html
+</p>
+
+<p class="maintext_indent">
+This demo will cover leveraging configinit on FreeBSD to easily install arbitrary packages and configure SaltStack (a popular configuration management engine) upon first boot.  Hopefully I'll illustrate that a simple, clearly defined tool like configinit is capable of pretty powerful system automation while also being flexible.  This is also known as “the Unix way” for those following along at home.
+</p>
+
+<p class="maintext_indent">
+For starters here is our example configinit script which will be defined as user data when instatiating a new FreeBSD EC2 instance:
+</p>
+
+<pre>
+!/bin/sh
+# This sed line updates the list of packages to install on first boot
+sed -i .dist 's/awscli/awscli\ py27-salt\ bash\ tmux\ sudo\ vim-lite/g'  /etc/rc.conf
+# Define hostname
+echo "hostname="nsub0.iad.tribdev.com"" >> /etc/rc.conf
+
+# SaltStack agent configuration
+mkdir -p /usr/local/etc/salt/
+
+echo "master: 10.1.2.3" >> /usr/local/etc/salt/minion
+echo "hash_type: sha512" >> /usr/local/etc/salt/minion
+
+echo "salt_minion_enable="YES"" >> /etc/rc.conf
+
+</pre>
+<p class="maintext_indent">
+The above example is a simple /bin/sh script which is executed by your new EC2 instance on first boot.  It illustrates that you can not only install packages on first boot, but also automate standing up your configuration management engine (SaltStack minion in this example) leveraging configinit.  Because this is "user data" that is passed by EC2 it is very simple to automate deployment of new instances using configinit.  I've been able to template out my user data shell script (similar the one above), and have my inventory define settings like "hostname" as well as my package list.  SaltStack takes care of the rest once we have this base config deployed, and I've managed to lower the amount of data I have to keep track of.
+</p>
+
+<p class="maintext_indent">
+Colin's EC2 images are configured to have cloudinit enabled by default.  Here is what the base /etc/rc.conf from his image looks like which will hopefully put the sed command above in better context:
+</p>
+
+<pre>
+ec2_configinit_enable=YES
+ec2_fetchkey_enable=YES
+ec2_ephemeralswap_enable=YES
+ec2_loghostkey_enable=YES
+firstboot_freebsd_update_enable=YES
+firstboot_pkgs_enable=YES
+growfs_enable="YES"
+ifconfig_DEFAULT="SYNCDHCP"
+sshd_enable="YES"
+firstboot_pkgs_list="awscli"
+
+</pre>
+<p class="maintext_indent">
+I should note one other feature of the FreeBSD EC2 images, which I’ll illustrate belo.  When you first boot a FreeBSD EC2 instance it will perform a freebsd-update (another utility written by Colin) to ensure your new system is fully patched against the RELEASE branch you are deploying.  This saves some work as an admin, as I don’t have to configure my CloudInit script to perform an upgrade myself.  Having sane default behaviour is an added bonus in such a hostile environment like AWS.
+</p>
+
+<p class="maintext_indent">
+So let’s show this in action shall we?
+</p>
+
+<pre>
+
+FreeBSD 10.3-RELEASE #0 r297264: Fri Mar 25 02:10:02 UTC 2016
+    root@releng1.nyi.freebsd.org:/usr/obj/usr/src/sys/GENERIC amd64
+FreeBSD clang version 3.4.1 (tags/RELEASE_34/dot1-final 208032) 20140512
+XEN: Hypervisor version 4.2 detected.
+
+[snip dmesg info]
+
+Generating host.conf.
+Fetching EC2 user-data.
+Processing EC2 user-data.
+Installing pkg-1.8.7_3...
+Extracting pkg-1.8.7_3: .......... done
+Bootstrapping pkg from pkg+http://pkg.FreeBSD.org/FreeBSD:10:amd64/quarterly, please wait...
+Verifying signature with trusted certificate pkg.freebsd.org.2013102301... done
+Updating FreeBSD repository catalogue...
+Fetching meta.txz: . done
+Fetching packagesite.txz: .......... done
+Processing entries: .......... done
+FreeBSD repository update completed. 25472 packages processed.
+Updating database digests format: . done
+The following 45 package(s) will be affected (of 0 checked):
+
+New packages to be INSTALLED:
+    awscli: 1.10.63
+    py27-salt: 2016.3.3
+
+[ snip lots of packages here ]
+
+    libevent2: 2.0.22_1
+
+Number of packages to be installed: 45
+
+[ snip pkg install messages ]
+
+freebsd-update: src component not installed, skipped
+freebsd-update: Looking up update.FreeBSD.org mirrors... 4 mirrors found.
+freebsd-update: Fetching public key from update6.freebsd.org... done.
+freebsd-update: Fetching metadata signature for 10.3-RELEASE from update6.freebsd.org... done.
+freebsd-update: Fetching metadata index... done.
+freebsd-update: Fetching 2 metadata files... done.
+freebsd-update: Inspecting system... done.
+freebsd-update: Preparing to download files... done.
+freebsd-update: Fetching 91 patches.....10....20....30....40....50....60....70....80....90 done.
+freebsd-update: Applying patches... done.
+freebsd-update: 
+freebsd-update: The following files will be updated as part of updating to 10.3-RELEASE-p9:
+freebsd-update: /bin/freebsd-version
+
+[ snip lots of update info ]
+
+freebsd-update: Installing updates... done.
+freebsd-update: Requesting reboot after installing updates.
+
+</pre>
+
+<p class="maintext_indent">
+So pretty normal boot process and you'll notice right after network is finished being configured cloudinit kicks-in installing our defined packages.  Also, as I mentioned earlier you'll notice that we also execute freebsd-update which ensures we are all patched up.  Hopefully this demo gives you all some good ideas on how to exploit automation techniques like this for your infrastructure.
+</p>
+
+
+            <!-- <div> <img class="jump" src="_images/arrow_jump.svg" height="175" width="175"></div> -->
+
+            
+
+            <!-- <div id="sidebar">
+                <p class="sidehed">
+                RECENT POSTS
+                </p>
+                <p class="sidetext"> <a href="#">
+                Installing OpenSMTPD On FreeBSD</a>
+                </p>
+                <p class="sidetext"> <a href="#">
+                Configinit on AWS</a>
+                </p>
+                <p class="sidetext"> <a href="#">
+                Post title here tk tk post</a>
+                </p>
+                <p class="sidetext"> <a href="#">
+                Post title here tk tk post</a>
+                </p>
+                <p class="sidetext"> <a href="#">
+                Post title here tk tk post</a>
+                </p>
+
+                <div id="social">
+                    <a class="icon-mail"><href="mailto:nomadlogic@gmail.com"></a>
+                    <a class="icon-twitter2"><href="http://www.twitter.com" target="_blank"></a>
+                    <a class="icon-linkedin"><href="http://www.linkedin.com" target="_blank"></a>
+                </div>
+
+
+            </div> -->
+            
+
+        <!--    <div id="button1"><a href="#">Next</a></div>
+            <div id="button2"><a href="#">Previous</a></div>
+ -->
+
+                    <div class="rule"></div>
+
+ </article>
+</article>
+
+            </div>
+                <div id="space"></div>
+            </div>
+    <footer> &copy; 2016 Pete Wright</footer>
+        
+    </body>
+</html>
+
